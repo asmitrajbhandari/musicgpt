@@ -1,8 +1,11 @@
 import './globals.css'
 import './musicgpt.scss'
+import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import Image from 'next/image'
 import Sidebar from './components/Sidebar'
+import ProgressBar from './components/ProgressBar'
+import TitleManager from './components/TitleManager'
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -13,6 +16,9 @@ const inter = Inter({
 export const metadata = {
   title: 'MusicGPT',
   description: 'MusicGPT',
+  icons: {
+    icon: '/assets/images/musicgpt-logo.png',
+  },
 }
 
 export default function RootLayout({
@@ -23,18 +29,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className} font-sans antialiased`}>
-        <div className="relative z-1 w-full overflow-x-hidden">
+        <div className="relative z-1 w-full overflow-x-hidden bg-section-gradient h-[620px]">
+          <TitleManager />
+          <ProgressBar />
           <Sidebar />
           <div className="lg:ml-[200px] transition-all duration-300">
-            {/* Mobile Header */}
-            <div className="lg:hidden fixed top-0 left-0 right-0 z-50 flex items-center gap-3 p-4 bg-[#0A0C0D]">
-              <div className="w-8 h-8">
-                <Image src="/assets/images/musicgpt-logo.png" alt="logo" width={32} height={32} />
-              </div>
-              <span className="logo-text font-medium text-white">MusicGPT</span>
-            </div>
             <div className="lg:pt-0 pt-16">
-              {children}
+              <div className="">
+                {children}
+              </div>
             </div>
           </div>
         </div>
