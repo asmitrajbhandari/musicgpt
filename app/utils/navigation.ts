@@ -5,6 +5,11 @@ export interface NavigationItem {
   iconActive: string
 }
 
+export interface FooterItem {
+  label: string
+  href?: string
+}
+
 export const navigationItems: NavigationItem[] = [
   { 
     href: '/', 
@@ -41,10 +46,31 @@ export const libraryItems: NavigationItem[] = [
   }
 ]
 
+export const footerPrimaryItems: FooterItem[] = [
+  { label: 'Pricing', href: '/pricing' },
+  { label: 'Affiliate', href: '/affiliate' },
+  { label: 'API', href: '/api' },
+  { label: 'About', href: '/about' }
+]
+
+export const footerSecondaryItems: FooterItem[] = [
+  { label: 'Terms', href: '/terms' },
+  { label: 'Privacy', href: '/privacy' },
+  { label: 'EN' }
+]
+
 export function getNavigationItems(): NavigationItem[] {
   return navigationItems
 }
 
 export function getLibraryItems(): NavigationItem[] {
   return libraryItems
+}
+
+export function getFooterPrimaryItems(): FooterItem[] {
+  return footerPrimaryItems
+}
+
+export function getFooterSecondaryItems(): FooterItem[] {
+  return footerSecondaryItems
 }

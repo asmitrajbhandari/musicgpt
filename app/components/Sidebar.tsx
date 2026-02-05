@@ -5,6 +5,8 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
 import { getNavigationItems, getLibraryItems } from '../utils/navigation'
+import { GPT_CONSTANTS } from '../utils/gptConstants'
+import Footer from './Footer'
 
 export default function Sidebar() {
   const pathname = usePathname()
@@ -28,8 +30,8 @@ export default function Sidebar() {
         <Image 
           src={isActive ? iconActive : icon} 
           alt={typeof children === 'string' ? children : ''} 
-          width={20} 
-          height={20} 
+          width={GPT_CONSTANTS.SVG.MD.width} 
+          height={GPT_CONSTANTS.SVG.MD.height} 
         />
         {children}
       </Link>
@@ -37,8 +39,8 @@ export default function Sidebar() {
   }
 
   // Reusable Sidebar Content Component
-  const SidebarContent = ({ isMobile = false }) => (
-    <>
+  const SidebarContent = ({ isMobile = false }) => {
+    const renderTopSection = () => (
       <div className={`${isMobile ? 'flex flex-col gap-8 px-5 pb-4 pt-24' : 'p-4 flex flex-col gap-8'}`}>
         {!isMobile && (
           <div>
@@ -53,11 +55,11 @@ export default function Sidebar() {
           </div>
         )}
         <div className={`${isMobile ? '' : 'relative'}`}>
-          <div className="flex items-center border border-1 border-white/10 transition duration-200 hover:cursor-pointer rounded-[30px] rounded-lg px-4 py-2 hover:bg-white/[0.08] hover:border-transparent">
-            <Search width={20} height={20} className="text-white" />
+          <div className="flex items-center border border-1 border-white/10 transition duration-200 hover:cursor-pointer rounded-[30px] px-4 py-2 hover:bg-white/[0.08] hover:border-transparent">
+            <Search width={GPT_CONSTANTS.SVG.MD.width} height={GPT_CONSTANTS.SVG.MD.height} className="text-white" />
             <span className="text-white font-medium text-sm ml-2 flex-1">Search</span>
             <span className="flex flex-row items-center leading-none">
-                <span className=""><Command width={16} height={16} className="text-white/30 size-[14px]" /></span>
+                <span className=""><Command width={GPT_CONSTANTS.SVG.SM.width} height={GPT_CONSTANTS.SVG.SM.height} className="text-white/30 size-[14px]" /></span>
                 <span className="text-white/30 gpt-text-std font-medium ml-0.5">K</span>
             </span>
           </div>
@@ -75,9 +77,12 @@ export default function Sidebar() {
           ))}
         </div>
       </div>
-      <div className="flex flex-col">
-        <nav className="p-4 flex flex-col gap-8 overflow-y-auto overflow-x-visible transition-colors duration-200 h-[calc(100vh-300px)] border-t border-white/10">
-          <div className="flex flex-col items-start gap-2">
+    )
+
+    const renderBottomSection = () => (
+      <div className="flex flex-col h-dvh overflow-hidden">
+        <nav className="p-4 flex flex-col flex-1 overflow-y-auto gap-8 overflow-y-auto">
+          <div className="flex flex-col gap-2">
             <div className="px-4 text-sm font-medium leading-9 text-white/80">Library</div>
             {libraryItems.map((item) => (
               <NavLink 
@@ -90,24 +95,26 @@ export default function Sidebar() {
               </NavLink>
             ))}
             <button className="flex h-9 cursor-pointer items-center gap-2 rounded-full px-4 text-sm font-medium text-white hover:bg-white/[0.08]">
-              <Plus width={20} height={20} />
+              <Plus width={GPT_CONSTANTS.SVG.MD.width} height={GPT_CONSTANTS.SVG.MD.height} />
               <span>New Playlist</span>
             </button>
           </div>
         </nav>
         
         {/* Footer - Sticky at bottom of sidebar */}
-        <footer className="mt-auto p-4">
-          <div className="bg-[linear-gradient(90deg,rgba(48,7,255,0.29)_0%,rgba(209,40,150,0.27)_60%,rgba(255,86,35,0.25)_100%)] h-1">
-            Model v6 Pro is here!
-            <div className="">
-              Pushing boundaries to the world's best AI music model
-            </div>
-          </div>
+        <footer className="flex-shrink-0 p-4">
+          <Footer />
         </footer>
       </div>
-    </>
-  )
+    )
+
+    return (
+      <>
+        {renderTopSection()}
+        {renderBottomSection()}
+      </>
+    )
+  }
 
   const navigationItems = getNavigationItems()
   const libraryItems = getLibraryItems()
@@ -122,9 +129,9 @@ export default function Sidebar() {
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
           >
             {isSidebarOpen ? (
-              <SquareArrowLeft width={20} height={20} className="text-white" />
+              <SquareArrowLeft width={GPT_CONSTANTS.SVG.MD.width} height={GPT_CONSTANTS.SVG.MD.height} className="text-white" />
             ) : (
-              <PanelLeft width={20} height={20} className="text-white" />
+              <PanelLeft width={GPT_CONSTANTS.SVG.MD.width} height={GPT_CONSTANTS.SVG.MD.height} className="text-white" />
             )}
           </button>
           <div className="w-8 h-8">
@@ -136,7 +143,7 @@ export default function Sidebar() {
 
       {/* Mobile Sidebar */}
       <aside className={`
-        lg:hidden fixed flex-col justify-between w-[300px] bg-white/[0.03] h-screen shrink-0 z-40 transition-transform duration-300 backdrop-blur-[30px]
+        lg:hidden fixed flex-col justify-between w-[300px] bg-white/[0.05] h-screen shrink-0 z-40 transition-transform duration-300 backdrop-blur-[40px]
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
         <SidebarContent isMobile={true} />

@@ -29,7 +29,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className} font-sans antialiased`}>
-        <div className="relative z-1 w-full overflow-x-hidden bg-section-gradient h-[620px]">
+        <div className="relative z-1 w-full overflow-x-hidden bg-section-gradient h-full">
           <TitleManager />
           <ProgressBar />
           <Sidebar />
