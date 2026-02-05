@@ -1,9 +1,10 @@
-"use client"
-import { Search, Command, PanelLeft, SquareArrowLeft, Plus } from 'lucide-react'
-import Image from 'next/image'
+'use client'
+import { Search, Command, Plus, PanelLeft, SquareArrowLeft } from 'lucide-react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import Image from 'next/image'
 import { useState } from 'react'
+import { usePathname } from 'next/navigation'
+import { ScrollArea } from '@/components/ui/scroll-area'
 import { getNavigationItems, getLibraryItems } from '../utils/navigation'
 import { GPT_CONSTANTS } from '../utils/gptConstants'
 import Footer from './Footer'
@@ -21,11 +22,12 @@ export default function Sidebar() {
     const isActive = pathname === href
     return (
       <Link 
-        className={`group/navlink relative flex h-9 items-center gap-2 rounded-full px-4 text-sm font-medium text-white transition duration-200 active:scale-95 ${
-          isActive ? 'bg-white/[0.08]' : 'hover:bg-white/[0.08]'
-        }`} 
-        href={href}
-        onClick={() => setIsSidebarOpen(false)}
+        href={href} 
+        className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 ${
+          isActive 
+            ? 'text-white bg-white/10' 
+            : 'text-white/60 hover:text-white hover:bg-white/[0.05]'
+        }`}
       >
         <Image 
           src={isActive ? iconActive : icon} 
@@ -80,14 +82,14 @@ export default function Sidebar() {
     )
 
     const renderBottomSection = () => (
-      <div className="flex flex-col h-dvh overflow-hidden">
-        <nav className="p-4 flex flex-col flex-1 overflow-y-auto gap-8 overflow-y-auto">
+      <div className="flex flex-col h-screen overflow-hidden">
+        <ScrollArea className="p-4 flex flex-col flex-1 gap-8">
           <div className="flex flex-col gap-2">
             <div className="px-4 text-sm font-medium leading-9 text-white/80">Library</div>
             {libraryItems.map((item) => (
               <NavLink 
                 key={item.href} 
-                href={item.href} 
+                href={item.href}
                 icon={item.icon}
                 iconActive={item.iconActive}
               >
@@ -99,7 +101,7 @@ export default function Sidebar() {
               <span>New Playlist</span>
             </button>
           </div>
-        </nav>
+        </ScrollArea>
         
         {/* Footer - Sticky at bottom of sidebar */}
         <footer className="flex-shrink-0 p-4">
@@ -109,10 +111,10 @@ export default function Sidebar() {
     )
 
     return (
-      <>
+      <div className={`flex flex-col ${isMobile ? 'justify-between h-screen' : 'h-screen'}`}>
         {renderTopSection()}
         {renderBottomSection()}
-      </>
+      </div>
     )
   }
 
@@ -143,7 +145,7 @@ export default function Sidebar() {
 
       {/* Mobile Sidebar */}
       <aside className={`
-        lg:hidden fixed flex-col justify-between w-[300px] bg-white/[0.05] h-screen shrink-0 z-40 transition-transform duration-300 backdrop-blur-[40px]
+        lg:hidden fixed flex-col w-[300px] bg-white/[0.05] h-screen shrink-0 z-40 transition-transform duration-300 backdrop-blur-[40px]
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
         <SidebarContent isMobile={true} />
