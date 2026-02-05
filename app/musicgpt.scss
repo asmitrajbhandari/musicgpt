@@ -52,3 +52,46 @@ body {
 .gpt-text-sm{
   font-size: 1.125rem;
 }
+
+.profile-gradient-ring {
+  position: relative;
+  border-radius: 50%;
+  
+  // Apply the Figma shadow
+  box-shadow: 0px 4px 32.6px -13px #AA00FF;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    
+    // The exact Figma Gradient
+    background: linear-gradient(
+      314.53deg, 
+      #C800FF 17.23%, 
+      #FF2C9B 38.51%, 
+      #FF7B00 66.07%, 
+      #FF8504 78.98%, 
+      #FFD363 87.1%
+    );
+
+    // The Magic: Masking out the center
+    // 2px is your border thickness
+    -webkit-mask: 
+      linear-gradient(#fff 0 0) content-box, 
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    padding: 2px; 
+  }
+}
+
+.insufficient-credits {
+  display: flex;
+  flex-direction: column;
+  background-color: #D89C3A;
+  opacity: 0.3;
+  border-radius: 0.75rem;
+  padding: 0.75rem;
+}

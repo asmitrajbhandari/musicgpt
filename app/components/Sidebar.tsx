@@ -1,10 +1,12 @@
 'use client'
-import { Search, Command, Plus, PanelLeft, SquareArrowLeft } from 'lucide-react'
+import { Search, Command, Plus, PanelLeft, SquareArrowLeft, ChevronDown } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useState } from 'react'
 import { usePathname } from 'next/navigation'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import { Button } from '@/components/ui/button'
+import Profile from './Profile'
 import { getNavigationItems, getLibraryItems } from '../utils/navigation'
 import { GPT_CONSTANTS } from '../utils/gptConstants'
 import Footer from './Footer'
@@ -23,7 +25,7 @@ export default function Sidebar() {
     return (
       <Link 
         href={href} 
-        className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 ${
+        className={`flex items-center gap-3 rounded-full px-3 py-2 text-sm font-medium transition-all duration-200 ${
           isActive 
             ? 'text-white bg-white/10' 
             : 'text-white/60 hover:text-white hover:bg-white/[0.05]'
@@ -123,6 +125,11 @@ export default function Sidebar() {
 
   return (
     <>
+      {/* Floating Profile Button */}
+      <div className="fixed top-5 right-5 z-[70]">
+        <Profile />
+      </div>
+
       {/* Mobile Header with Sidebar */}
       <header className="lg:hidden">
         <div className="fixed top-0 left-0 right-0 z-[60] flex flex-row items-center gap-3 p-5">
