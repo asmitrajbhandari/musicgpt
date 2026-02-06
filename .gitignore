@@ -38,3 +38,8 @@ next-env.d.ts
 
 # tailwind
 .postcssrc
+
+# socket server dependencies
+socket-server/node_modules/
+socket-server/*.log
+socket-server/.DS_Store

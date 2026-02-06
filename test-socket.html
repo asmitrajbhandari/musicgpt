@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Socket.IO Test</title>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+</head>
+<body>
+    <h1>Socket.IO Test</h1>
+    <button onclick="testSongCreation()">Test Song Creation</button>
+    <div id="status"></div>
+    
+    <script>
+        const socket = io('http://localhost:3001');
+        
+        socket.on('connect', () => {
+            console.log('Connected to server');
+            document.getElementById('status').innerHTML = '✅ Connected to server';
+        });
+        
+        socket.on('song-progress', (data) => {
+            console.log('Progress update:', data);
+            document.getElementById('status').innerHTML = `
+                <div>Progress: ${data.progress}%</div>
+                <div>Status: ${data.status}</div>
+                <div>Prompt: ${data.prompt}</div>
+            `;
+        });
+        
+        function testSongCreation() {
+            console.log('Testing song creation...');
+            socket.emit('create-song', { prompt: 'Test song creation' });
+        }
+    </script>
+</body>
+</html>
