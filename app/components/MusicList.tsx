@@ -6,7 +6,7 @@ import { useSongStore } from "@/stores/songStore";
 import { Button } from "@/components/ui/button";
 import { ThumbsUp, ThumbsDown, ArrowDownToLine } from "lucide-react";
 
-interface MusicItemProps {
+interface MusicListProps {
   musicItem: {
     id: string;
     title: string;
@@ -21,7 +21,7 @@ interface MusicItemProps {
   };
 }
 
-export default function MusicItem({ musicItem }: MusicItemProps) {
+export default function MusicList({ musicItem }: MusicListProps) {
   const progressPercentage = musicItem.progress || 0;
 
   // Render if there's a prompt OR if the item is already generating/completed

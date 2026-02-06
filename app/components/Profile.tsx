@@ -12,9 +12,11 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import MusicItem from "./MusicItem";
+import MusicList from "./MusicList";
 import Image from "next/image";
 import { useSongStore } from "@/stores/songStore";
+import { useWarningStore } from "@/stores/warningStore";
+import { useInvalidPromptStore } from "@/stores/invalidPromptStore";
 import { motion } from "framer-motion";
 import {
   DropdownMenu,
@@ -27,13 +29,8 @@ import { isValidPrompt } from "@/lib/utils/promptValidator";
 export default function Profile() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const { musicItems } = useSongStore();
-
-  // Count items that are currently generating (in progress)
-  const itemsInProgress = musicItems.filter(
-    (item) => item.status === 'generating' || item.status === 'pending'
-  ).length;
-
-  const showServerBusyWarning = itemsInProgress > 2;
+  const { showServerBusyWarning } = useWarningStore();
+  const { invalidPrompts } = useInvalidPromptStore();
 
   return (
     <DropdownMenu open={isProfileOpen} onOpenChange={setIsProfileOpen}>
@@ -136,7 +133,7 @@ export default function Profile() {
               {musicItems
                 .filter((item) => isValidPrompt(item.prompt))
                 .map((item) => (
-                  <MusicItem key={item.id} musicItem={item} />
+                  <MusicList key={item.id} musicItem={item} />
                 ))}
             </section>
 
@@ -154,7 +151,7 @@ export default function Profile() {
                   </span>
                 </div>
                 <div className="text-white/60 text-sm">
-                4.9K users in the queue.{" "}
+                  4.9K users in the queue.{" "}
                   <span className="underline cursor-pointer hover:text-white transition-colors">
                     Retry
                   </span>
@@ -163,33 +160,28 @@ export default function Profile() {
               </section>
             )}
 
-            {/* Invalid Prompt Sections - Show only for prompts without the word "song" */}
-            {musicItems
-              .filter((item) => !isValidPrompt(item.prompt))
-              .filter((item, index, self) => 
-                index === self.findIndex((t) => t.prompt === item.prompt)
-              )
-              .map((item) => (
-                <section key={item.id} className="flex flex-row gap-2">
-                  <div className="w-[60px] h-[60px] min-w-[60px] flex-shrink-0 rounded-lg bg-[#D89C3A] flex items-center justify-center">
-                    <Image
-                      src="/assets/images/smiling-face.png"
-                      alt="Invalid prompt icon"
-                      width={36}
-                      height={36}
-                    />
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="text-white text-sm font-semibold">
-                      Invalid Prompt
-                    </span>
-                    <span className="text-white/30 text-sm">
-                      Your prompt does not seem to be valid. Please provide a
-                      prompt related to song.
-                    </span>
-                  </div>
-                </section>
-              ))}
+            {/* Invalid Prompt Sections - Show from invalid prompts store */}
+            {invalidPrompts.map((prompt, index) => (
+              <section key={`invalid-${index}`} className="flex flex-row gap-2">
+                <div className="w-[60px] h-[60px] min-w-[60px] flex-shrink-0 rounded-lg bg-[#D89C3A] flex items-center justify-center">
+                  <Image
+                    src="/assets/images/smiling-face.png"
+                    alt="Invalid prompt icon"
+                    width={36}
+                    height={36}
+                  />
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-white text-sm font-semibold">
+                    Invalid Prompt
+                  </span>
+                  <span className="text-white/30 text-sm">
+                    Your prompt does not seem to be valid. Please provide a
+                    prompt related to song.
+                  </span>
+                </div>
+              </section>
+            ))}
           </div>
         </ScrollArea>
       </DropdownMenuContent>
