@@ -30,27 +30,26 @@ class SocketService {
     if (!this.socket) return
 
     this.socket.on('connect', () => {
-      console.log('✅ Connected to Socket.IO server')
+      console.log('Connected to Socket.IO server')
       this.reconnectAttempts = 0
     })
 
     this.socket.on('disconnect', (reason) => {
-      console.log('❌ Disconnected from Socket.IO server:', reason)
+      console.log('Disconnected from Socket.IO server:', reason)
     })
 
     this.socket.on('connect_error', (error: Error) => {
-      console.error('🔥 Socket connection error:', error.message)
+      console.error('Socket connection error:', error.message)
       this.reconnectAttempts++
       
       if (this.reconnectAttempts >= this.maxReconnectAttempts) {
-        console.error('❌ Max reconnection attempts reached')
+        console.error('Max reconnection attempts reached')
       }
     })
 
     this.socket.on('song-progress', (data: { id: string; progress: number; status: string; prompt: string }) => {
-      console.log('📊 Received song-progress:', data)
+      console.log('Received song-progress:', data)
       
-      // Calculate progress text based on progress percentage
       let progressText = ''
       if (data.progress >= 0 && data.progress <= 20) {
         progressText = 'Starting AI and v engine.'
@@ -66,42 +65,38 @@ class SocketService {
         progressText = 'Complete'
       }
       
-      // Update the music item by ID
       if (data.id) {
         const store = useSongStore.getState()
         const musicItem = store.musicItems.find(item => item.id === data.id)
         
         if (musicItem) {
-          // Update existing item with new progress data
           store.updateMusicItem(data.id, {
             progress: data.progress || 0,
             status: (data.status as 'idle' | 'pending' | 'generating' | 'completed' | 'failed') || 'generating',
             progressText
           })
         } else {
-          console.warn('⚠️ Music item not found for ID:', data.id)
+          console.warn('Music item not found for ID:', data.id)
         }
       } else {
-        console.warn('⚠️ No ID in progress data:', data)
+        console.warn('No ID in progress data:', data)
       }
     })
 
-    // Add general error listener
     this.socket.on('error', (error: any) => {
-      console.error('🔥 Socket error:', error)
+      console.error('Socket error:', error)
     })
   }
 
   emit(event: string, data: any) {
-    console.log('📤 Emitting event:', event, data)
+    console.log('Emitting event:', event, data)
     
     if (this.socket?.connected) {
       this.socket.emit(event, data)
     } else {
-      console.warn('⚠️ Socket not connected, attempting to connect...')
+      console.warn('Socket not connected, attempting to connect...')
       this.connect()
       
-      // Retry emit after connection
       setTimeout(() => {
         this.emit(event, data)
       }, 1000)
@@ -110,7 +105,7 @@ class SocketService {
 
   disconnect() {
     if (this.socket) {
-      console.log('🔌 Disconnecting from Socket.IO server')
+      console.log('Disconnecting from Socket.IO server')
       this.socket.disconnect()
       this.socket = null
     }

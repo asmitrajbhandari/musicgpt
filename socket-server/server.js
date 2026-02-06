@@ -2,7 +2,6 @@ const { createServer } = require('http');
 const { Server } = require('socket.io');
 
 const httpServer = createServer((req, res) => {
-  // Handle HTTP POST requests for song creation
   if (req.method === 'POST' && req.url === '/create-song') {
     let body = '';
     
@@ -13,8 +12,8 @@ const httpServer = createServer((req, res) => {
     req.on('end', async () => {
       try {
         const data = JSON.parse(body);
-        console.log('🎵 HTTP REQUEST RECEIVED:', data.prompt);
-        console.log('📋 Item IDs:', data.itemIds);
+        console.log('HTTP REQUEST RECEIVED:', data.prompt);
+        console.log('Item IDs:', data.itemIds);
         
         const { prompt, itemIds } = data;
         
@@ -29,11 +28,9 @@ const httpServer = createServer((req, res) => {
         
         console.log('Starting progress simulation for items:', item1Id, item2Id);
         
-        // Send success response immediately
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ success: true, message: 'Song creation started' }));
         
-        // Simulate progress for both items with different speeds
         const simulateItem1 = async () => {
           for (let progress = 1; progress <= 100; progress++) {
             const progressData = {
@@ -46,14 +43,12 @@ const httpServer = createServer((req, res) => {
             io.emit('song-progress', progressData);
             
             if (progress % 10 === 0) {
-              console.log(`📊 Item1 Progress: ${progress}%`);
+              console.log(`Item1 Progress: ${progress}%`);
             }
             
-            // Wait 250ms between updates for item1
             await new Promise(resolve => setTimeout(resolve, 250));
           }
           
-          // Emit final completion for item1
           const completionData = {
             id: item1Id,
             prompt: prompt,
@@ -79,14 +74,12 @@ const httpServer = createServer((req, res) => {
             io.emit('song-progress', progressData);
             
             if (progress % 10 === 0) {
-              console.log(`📊 Item2 Progress: ${progress}%`);
+              console.log(`Item2 Progress: ${progress}%`);
             }
             
-            // Wait 300ms between updates for item2 (slower)
             await new Promise(resolve => setTimeout(resolve, 400));
           }
           
-          // Emit final completion for item2
           const completionData = {
             id: item2Id,
             prompt: prompt,
@@ -100,9 +93,8 @@ const httpServer = createServer((req, res) => {
           io.emit('song-progress', completionData);
         };
         
-        // Run both simulations in parallel
         Promise.all([simulateItem1(), simulateItem2()]).then(() => {
-          console.log('✅ Both items completed');
+          console.log('Both items completed');
         });
         
       } catch (error) {
@@ -126,15 +118,15 @@ const io = new Server(httpServer, {
 });
 
 io.on('connection', (socket) => {
-  console.log(`🔌 [${socket.id}] New Connection via ${socket.conn.transport.name}`);
+  console.log(`[${socket.id}] New Connection via ${socket.conn.transport.name}`);
 
   socket.on('disconnect', (reason) => {
-    console.log(`❌ [${socket.id}] Disconnected: ${reason}`);
+    console.log(`[${socket.id}] Disconnected: ${reason}`);
   });
 });
 
 httpServer.listen(3001, '0.0.0.0', () => {
-  console.log('🚀 Socket.IO server listening on port 3001');
-  console.log('🔗 HTTP endpoint: POST http://localhost:3001/create-song');
-  console.log('📊 Will broadcast song-progress events via WebSocket');
+  console.log('Socket.IO server listening on port 3001');
+  console.log('HTTP endpoint: POST http://localhost:3001/create-song');
+  console.log('Will broadcast song-progress events via WebSocket');
 });

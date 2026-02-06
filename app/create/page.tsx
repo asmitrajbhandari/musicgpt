@@ -37,7 +37,6 @@ export default function CreatePage() {
     (item) => (item.status === 'generating' || item.status === 'pending') && isValidPrompt(item.prompt)
   ).length
  
-  // Update warning state based on items in progress
   useEffect(() => {
     setShowServerBusyWarning(itemsInProgress > 4)
   }, [itemsInProgress, setShowServerBusyWarning])
@@ -85,7 +84,6 @@ export default function CreatePage() {
         return
       }
 
-      // Create two items with unique timestamp + random IDs
       const random1 = Math.floor(Math.random() * 1000).toString().padStart(3, '0')
       const random2 = Math.floor(Math.random() * 2000).toString().padStart(2, '0')
       
@@ -98,7 +96,6 @@ export default function CreatePage() {
       // Generate random image number (1-4)
       const randomImageNumber = Math.floor(Math.random() * 4) + 1
       
-      // Add both items to store immediately with custom IDs and versions
       addMusicItem(songTitle, input, item1Id, 'v1', randomImageNumber)
       addMusicItem(songTitle, input, item2Id, 'v2', randomImageNumber)
       
@@ -139,9 +136,9 @@ export default function CreatePage() {
           </h1>
           
           {/* Input Section */}
-          <div className="flex flex-col rounded-3xl bg-[#1D2125] w-full neon-glow-container">
-            <div className="neon-glow-overlay"></div>
-            <div className="relative pt-5 px-5 min-h-[72px]">
+          <div className="flex flex-col rounded-[2.5rem] bg-[#1D2125] w-full neon-glow-container">
+            <div className="neon-content-wrapper flex flex-col">
+              <div className="relative pt-5 px-5 min-h-[72px]">
               <textarea
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
@@ -238,6 +235,7 @@ export default function CreatePage() {
               >
                 <ArrowRight className={`w-5 h-5 text-black ${!showServerBusyWarning && 'group-hover:animate-[wiggle_0.5s_ease-in-out_infinite]'}`} />
               </button>
+            </div>
             </div>
           </div>
         </div>

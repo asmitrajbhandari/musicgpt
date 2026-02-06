@@ -132,6 +132,8 @@ export default function Profile() {
             <section className="flex flex-col gap-4 relative rounded-lg">
               {musicItems
                 .filter((item) => isValidPrompt(item.prompt))
+                .slice()
+                .reverse()
                 .map((item) => (
                   <MusicList key={item.id} musicItem={item} />
                 ))}

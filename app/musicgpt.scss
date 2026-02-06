@@ -154,23 +154,26 @@ body {
 .neon-glow-container {
   position: relative;
   border: 4px solid transparent;
-  border-radius: 1.5rem;
+  border-radius: 2.5rem;
   background-clip: padding-box;
+  overflow: visible;
   
   &::before {
     content: '';
     position: absolute;
     inset: -4px;
-    border-radius: 1.5rem;
+    border-radius: 2.5rem;
     padding: 4px;
     background: linear-gradient(
       90deg,
       transparent 0%,
-      transparent 25%,
-      #FF7B16 37.5%,
+      transparent 15%,
+      rgba(255, 123, 22, 0.3) 30%,
+      #FF7B16 40%,
       #EA2EFF 50%,
-      #FF7B16 62.5%,
-      transparent 75%,
+      #FF7B16 60%,
+      rgba(255, 123, 22, 0.3) 70%,
+      transparent 85%,
       transparent 100%
     );
     background-size: 200% 100%;
@@ -183,11 +186,43 @@ body {
       linear-gradient(#fff 0 0) content-box, 
       linear-gradient(#fff 0 0);
     mask-composite: exclude;
-    animation: neonBorderSweep 4s linear infinite;
+    animation: neonBorderSweep 3s linear infinite;
     pointer-events: none;
-    filter: drop-shadow(0 0 10px rgba(255, 123, 22, 0.6))
-            drop-shadow(0 0 20px rgba(234, 46, 255, 0.4));
+    z-index: 1;
   }
+  
+  &::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 2.5rem;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      transparent 15%,
+      rgba(255, 123, 22, 0.25) 30%,
+      rgba(255, 123, 22, 0.4) 40%,
+      rgba(234, 46, 255, 0.4) 50%,
+      rgba(255, 123, 22, 0.4) 60%,
+      rgba(255, 123, 22, 0.25) 70%,
+      transparent 85%,
+      transparent 100%
+    );
+    background-size: 200% 100%;
+    background-position: 100% 0;
+    animation: neonBorderSweep 3s linear infinite;
+    pointer-events: none;
+    filter: blur(40px);
+    opacity: 0.5;
+    z-index: 0;
+  }
+}
+
+.neon-content-wrapper {
+  position: relative;
+  z-index: 2;
+  background: #1D2125;
+  border-radius: 2.5rem;
 }
 
 .neon-glow-overlay {
