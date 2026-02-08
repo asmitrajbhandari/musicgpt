@@ -5,15 +5,18 @@ import { Button } from '@/components/ui/button'
 import { useSongStore } from '@/stores/songStore'
 import { useWarningStore } from '@/stores/warningStore'
 import { useInvalidPromptStore } from '@/stores/invalidPromptStore'
+import { useMusicPlayerStore } from '@/stores/musicPlayerStore'
 import { socketService } from '@/lib/socket'
 import { generateRandomTitle } from '@/lib/utils/titleGenerator'
 import { isValidPrompt } from '@/lib/utils/promptValidator'
 import MusicList from '@/app/components/MusicList'
+import MusicPlayer from '@/app/components/MusicPlayer'
 import Image from 'next/image'
 import { TriangleAlert, Sparkles, ArrowRight } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import CircleButton from '@/app/components/ui/circle-button'
 import RoundedButton from '@/app/components/ui/rounded-button'
+import { GPT_CONSTANTS } from '@/app/utils/gptConstants'
 
 export default function CreatePage() {
   const [input, setInput] = useState('')
@@ -23,6 +26,7 @@ export default function CreatePage() {
   const { addMusicItem, musicItems } = useSongStore()
   const { showServerBusyWarning, setShowServerBusyWarning } = useWarningStore()
   const { invalidPrompts, addInvalidPrompt } = useInvalidPromptStore()
+  const { isVisible: isPlayerVisible, currentTrack } = useMusicPlayerStore()
   
   // Placeholder slideshow
   const placeholders = [
@@ -126,13 +130,13 @@ export default function CreatePage() {
   }
 
   return (
-    <div className="flex flex-col items-center w-full">
-      <div className="w-full max-w-[800px] px-8">
+    <div className="flex flex-col items-center w-full relative">
+      <div className="w-full max-w-[800px]">
         
         {/* Main prompt section */}
-        <div className="flex flex-col items-center justify-center min-h-[590px] gap-6">
-          <h1 className="text-white text-2xl font-semibold text-center">
-            Turn any idea into sound
+        <div className="flex flex-col items-center justify-center min-h-[590px] pt-[3.625rem]">
+          <h1 className="text-white text-[32px] font-semibold text-center mb-6">
+            {GPT_CONSTANTS.CREATE_PAGE.HEADING}
           </h1>
           
           {/* Input Section */}
@@ -226,24 +230,58 @@ export default function CreatePage() {
               </div>
               <button 
                 onClick={handleSubmit}
-                disabled={showServerBusyWarning}
+                disabled={showServerBusyWarning || !input.trim()}
                 className={`w-10 h-10 rounded-full bg-white flex items-center justify-center transition-all duration-200 group ${
-                  showServerBusyWarning 
+                  showServerBusyWarning || !input.trim()
                     ? 'opacity-30 cursor-not-allowed' 
                     : 'hover:bg-white/90 hover:scale-110 active:scale-90'
                 }`}
               >
-                <ArrowRight className={`w-5 h-5 text-black ${!showServerBusyWarning && 'group-hover:animate-[wiggle_0.5s_ease-in-out_infinite]'}`} />
+                <ArrowRight className={`w-5 h-5 text-black ${!showServerBusyWarning && input.trim() && 'group-hover:animate-[wiggle_0.5s_ease-in-out_infinite]'}`} />
               </button>
             </div>
             </div>
+          </div>
+
+          {/* Action Buttons Section */}
+          <div className="flex flex-row gap-2 mt-5">
+            <RoundedButton 
+              icon="/assets/svg/create-song.svg"
+              alt="Create Song"
+              text="Create Song"
+              className="text-white/30"
+            />
+            <RoundedButton 
+              icon="/assets/svg/create-sound.svg"
+              alt="Create Sound"
+              text="Create Sound"
+              className="text-white/30"
+            />
+            <RoundedButton 
+              icon="/assets/svg/speak-text.svg"
+              alt="Speak Text"
+              text="Speak text"
+              className="text-white/30"
+            />
+            <RoundedButton 
+              icon="/assets/svg/change-file.svg"
+              alt="Change File"
+              text="Change file"
+              className="text-white/30"
+            />
+            <RoundedButton 
+              icon="/assets/svg/random.svg"
+              alt="Random"
+              text="Random"
+              className="text-white/30"
+            />
           </div>
         </div>
 
         {/* Music Items Display - Only show valid prompts */}
         {musicItems.filter((item) => isValidPrompt(item.prompt)).length > 0 && (
-          <div className="flex flex-col gap-4 mt-8">
-            <h2 className="text-white text-xl font-semibold">Recent Generations</h2>
+          <div className="flex flex-col gap-4 mt-8 pb-4">
+            <h2 className="text-white text-xl font-semibold">{GPT_CONSTANTS.CREATE_PAGE.RECENT_GENERATIONS}</h2>
             {musicItems
               .filter((item) => isValidPrompt(item.prompt))
               .slice()
@@ -254,52 +292,61 @@ export default function CreatePage() {
           </div>
         )}
 
-        {/* Warning Section - Show when more than 2 items are processing */}
-        {showServerBusyWarning && (
-          <div className="flex flex-col gap-2 rounded-lg p-4 bg-[#EE0D37]/[0.08]">
-            <div className="flex items-center gap-2">
-              <TriangleAlert
-                width={16}
-                height={16}
-                className="text-[#EE0D37]"
-              />
-              <span className="text-white text-sm text-[#EE0D37]">
-                Oops! Server busy.
-              </span>
-            </div>
-            <div className="text-white/60 text-sm">
-              4.9K users in the queue.{" "}
-              <span className="underline cursor-pointer hover:text-white transition-colors">
-                Retry
-              </span>
-              .
-            </div>
+        {/* Error Messages Container - Wrap warnings and invalid prompts with gap */}
+        {(showServerBusyWarning || invalidPrompts.length > 0) && (
+          <div className="flex flex-col gap-4 mt-4">
+            {/* Warning Section - Show when more than 2 items are processing */}
+            {showServerBusyWarning && (
+              <div className="flex flex-col gap-2 rounded-lg p-4 bg-[#EE0D37]/[0.08]">
+                <div className="flex items-center gap-2">
+                  <TriangleAlert
+                    width={16}
+                    height={16}
+                    className="text-[#EE0D37]"
+                  />
+                  <span className="text-white text-sm text-[#EE0D37]">
+                    {GPT_CONSTANTS.ERROR_CONSTANTS.SERVER_BUSY.TITLE}
+                  </span>
+                </div>
+                <div className="text-white/60 text-sm">
+                  {GPT_CONSTANTS.ERROR_CONSTANTS.SERVER_BUSY.DESCRIPTION}{" "}
+                  <span className="underline cursor-pointer hover:text-white transition-colors">
+                    {GPT_CONSTANTS.ERROR_CONSTANTS.SERVER_BUSY.RETRY}
+                  </span>
+                  .
+                </div>
+              </div>
+            )}
+
+            {/* Invalid Prompt Sections - Show from invalid prompts store */}
+            {invalidPrompts.map((prompt, index) => (
+              <div key={`invalid-${index}`} className="flex flex-row gap-2">
+                <div className="w-[60px] h-[60px] min-w-[60px] flex-shrink-0 rounded-lg bg-[#D89C3A] flex items-center justify-center">
+                  <Image
+                    src="/assets/images/smiling-face.png"
+                    alt="Invalid prompt icon"
+                    width={36}
+                    height={36}
+                  />
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-white text-sm font-semibold">
+                    {GPT_CONSTANTS.ERROR_CONSTANTS.INVALID_PROMPT.TITLE}
+                  </span>
+                  <span className="text-white/30 text-sm">
+                    {GPT_CONSTANTS.ERROR_CONSTANTS.INVALID_PROMPT.DESCRIPTION}
+                  </span>
+                </div>
+              </div>
+            ))}
           </div>
         )}
-
-        {/* Invalid Prompt Sections - Show from invalid prompts store */}
-        {invalidPrompts.map((prompt, index) => (
-          <div key={`invalid-${index}`} className="flex flex-row gap-2">
-            <div className="w-[60px] h-[60px] min-w-[60px] flex-shrink-0 rounded-lg bg-[#D89C3A] flex items-center justify-center">
-              <Image
-                src="/assets/images/smiling-face.png"
-                alt="Invalid prompt icon"
-                width={36}
-                height={36}
-              />
-            </div>
-            <div className="flex flex-col">
-              <span className="text-white text-sm font-semibold">
-                Invalid Prompt
-              </span>
-              <span className="text-white/30 text-sm">
-                Your prompt does not seem to be valid. Please provide a
-                prompt related to song.
-              </span>
-            </div>
-          </div>
-        ))}
       </div>
+
+      {/* Music Player */}
+      {currentTrack && (
+        <MusicPlayer musicItem={currentTrack} isVisible={isPlayerVisible} />
+      )}
     </div>
   )
 }

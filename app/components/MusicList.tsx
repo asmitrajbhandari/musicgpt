@@ -3,8 +3,9 @@
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { useSongStore } from "@/stores/songStore";
+import { useMusicPlayerStore } from "@/stores/musicPlayerStore";
 import { Button } from "@/components/ui/button";
-import { ThumbsUp, ThumbsDown, ArrowDownToLine } from "lucide-react";
+import { ThumbsUp, ThumbsDown, ArrowDownToLine, Play } from "lucide-react";
 
 interface MusicListProps {
   musicItem: {
@@ -23,24 +24,32 @@ interface MusicListProps {
 
 export default function MusicList({ musicItem }: MusicListProps) {
   const progressPercentage = musicItem.progress || 0;
+  const showPlayer = useMusicPlayerStore((state) => state.showPlayer);
 
   // Render if there's a prompt OR if the item is already generating/completed
   if (!musicItem.prompt && musicItem.status === "idle") {
     return null;
   }
 
+  const handlePlayClick = () => {
+    showPlayer({
+      id: musicItem.id,
+      title: musicItem.title,
+      imageNumber: musicItem.imageNumber,
+    });
+  };
+
   return (
     <div className={`relative rounded-lg ${musicItem.status === 'completed' ? 'music-item-hover' : ''}`}>
       <div
-        className="absolute rounded-lg inset-0 bg-[#1C2024] z-0"
+        className="absolute rounded-lg inset-0 bg-[#1C2024] z-0 music-item-progress-bg"
         style={{
           width: `${progressPercentage}%`,
-          transition: "width 0.3s ease-out",
           display: progressPercentage === 100 ? "none" : "block",
         }}
       />
       <div className="flex flex-col gap-4 p-1 relative z-10">
-        <div className="flex flex-row gap-2 relative group/actions">
+        <div className="flex flex-row gap-2 relative group/actions group/play">
           <div className="rounded-lg bg-[#212529] flex items-center justify-center relative">
             <div className="w-16 rounded-lg h-16 relative overflow-hidden">
               <Image
@@ -49,6 +58,18 @@ export default function MusicList({ musicItem }: MusicListProps) {
                 fill
                 className="absolute inset-0 w-full h-full object-cover rounded-lg"
               />
+              
+              {/* Play Button Overlay - Only for completed items */}
+              {musicItem.status === "completed" && (
+                <div 
+                  className="absolute inset-0 flex items-center justify-center opacity-0 group-hover/play:opacity-100 transition-opacity duration-200 z-50 cursor-pointer"
+                  onClick={handlePlayClick}
+                >
+                  <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center">
+                    <Play className="w-5 h-5 text-white fill-white" />
+                  </div>
+                </div>
+              )}
               {/* 1. The Black Fade */}
               <motion.div
                 className="absolute inset-0 w-full h-full rounded-lg bg-[#111] z-10"
@@ -66,12 +87,8 @@ export default function MusicList({ musicItem }: MusicListProps) {
               {/* 2. The Rotating Light */}
               {musicItem.status !== "completed" && (
                 <motion.div
-                  className="absolute top-1/2 left-1/2 w-24 h-24 rounded-lg opacity-50 z-20"
+                  className="absolute w-24 h-24 rounded-lg opacity-50 z-20 rotating-light-gradient"
                   style={{
-                    background:
-                      "linear-gradient(180deg, rgba(132, 36, 241, .9), rgba(85, 23, 241, 0) 80%)",
-                    left: "50%",
-                    top: "50%",
                     x: "-50%",
                     y: "-50%",
                   }}

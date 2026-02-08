@@ -238,4 +238,27 @@ body {
   }
 }
 
+// MusicPlayer styles
+.music-player-offset {
+  left: calc(50% + 100px);
+}
+
+.progress-bar-gradient {
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.2) 25%, rgba(255,255,255,0.5) 50%, rgba(255,255,255,1) 100%);
+  box-shadow: 2px 0 10px rgba(255,255,255,0.8), 2px 0 20px rgba(255,255,255,0.5);
+  filter: blur(0.5px);
+}
+
+// MusicList styles
+.music-item-progress-bg {
+  transition: width 0.3s ease-out;
+}
+
+.rotating-light-gradient {
+  background: linear-gradient(180deg, rgba(132, 36, 241, .9), rgba(85, 23, 241, 0) 80%);
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
 

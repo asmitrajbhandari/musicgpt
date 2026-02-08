@@ -18,6 +18,7 @@ import { useSongStore } from "@/stores/songStore";
 import { useWarningStore } from "@/stores/warningStore";
 import { useInvalidPromptStore } from "@/stores/invalidPromptStore";
 import { motion } from "framer-motion";
+import { GPT_CONSTANTS } from "@/app/utils/gptConstants";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -115,16 +116,16 @@ export default function Profile() {
                     className="text-[#D89C3A]"
                   />
                   <span className="text-[#D89C3A] text-sm">
-                    Insufficient credits
+                    {GPT_CONSTANTS.ERROR_CONSTANTS.INSUFFICIENT_CREDITS}
                   </span>
                 </div>
                 <div className="text-[#E4E6E8] text-sm">
-                  Your credit balance : 0
+                  {GPT_CONSTANTS.PROFILE.CREDIT_BALANCE}
                 </div>
               </div>
 
               <div className="flex items-center">
-                <Button>Top Up</Button>
+                <Button>{GPT_CONSTANTS.PROFILE.TOP_UP}</Button>
               </div>
             </section>
 
