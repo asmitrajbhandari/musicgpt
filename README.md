@@ -11,7 +11,7 @@ Application simulates AI music generation from text prompts. Users enter a promp
 1. **Clone the repository**
    ```bash
    git clone https://github.com/asmitrajbhandari/musicgpt
-   cd nextjs-tailwind-app
+   cd musicgpt
    ```
 
 2. **Install dependencies**
