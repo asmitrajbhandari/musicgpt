@@ -4,6 +4,23 @@ const { Server } = require('socket.io');
 // Create a simple HTTP server for Socket.IO only
 const httpServer = createServer();
 
+// Health check endpoint
+httpServer.on('request', (req, res) => {
+  if (req.url === '/health' && req.method === 'GET') {
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ 
+      status: 'Socket server is running',
+      timestamp: new Date().toISOString(),
+      connectedClients: io.engine.clientsCount
+    }));
+    return;
+  }
+  
+  // Handle other routes
+  res.writeHead(404, { 'Content-Type': 'application/json' });
+  res.end(JSON.stringify({ error: 'Not found' }));
+});
+
 const io = new Server(httpServer, {
   cors: {
     origin: "*",
