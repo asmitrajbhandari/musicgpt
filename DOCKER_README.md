@@ -28,6 +28,10 @@ NEXT_PUBLIC_BASE_URL=http://localhost:3000
 STRIPE_SECRET_KEY=sk_test_your_secret_key
 STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret
 
+# WebSocket Configuration
+NEXT_PUBLIC_SOCKET_URL=http://localhost:3001
+NEXT_PUBLIC_BACKEND_API_URL=http://localhost:3002
+
 # Firebase Admin Configuration
 FIREBASE_ADMIN_PROJECT_ID=your_project_id
 FIREBASE_ADMIN_CLIENT_EMAIL=your_service_account_email
