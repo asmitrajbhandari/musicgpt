@@ -33,9 +33,20 @@ export async function PUT(request: NextRequest) {
       updatedAt: serverTimestamp()
     });
 
-    // Update Firebase Auth profile if user is authenticated
-    // Note: This would require the user's auth token, which should be passed from the frontend
-    // For now, we'll just update Firestore
+    // Update Firebase Auth profile
+    try {
+      const currentUser = auth.currentUser;
+      if (currentUser && currentUser.uid === userId) {
+        await firebaseUpdateProfile(currentUser, {
+          displayName: displayName || null,
+          photoURL: photoURL || null
+        });
+        console.log('Firebase Auth profile updated successfully');
+      }
+    } catch (authError) {
+      console.error('Failed to update Firebase Auth profile:', authError);
+      // Don't fail the whole operation if Auth update fails
+    }
 
     return NextResponse.json({ success: true, message: 'Profile updated successfully' }, { status: 201 });
 

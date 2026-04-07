@@ -484,11 +484,11 @@ And I know I can face any challenge`
 
   return (
     <div className="flex flex-col items-center w-full relative">
-      <div className="w-full max-w-[800px]">
+      <div className="w-full max-w-[800px] px-4 sm:px-6 lg:px-8">
         
         {/* Main prompt section */}
-        <div className="flex flex-col items-center justify-center min-h-[590px] pt-[3.625rem]">
-          <h1 className="text-white text-[32px] font-semibold text-center mb-6">
+        <div className="flex flex-col items-center justify-center min-h-[590px] pt-[3.625rem] sm:pt-[4rem]">
+          <h1 className="text-white text-[28px] sm:text-[32px] font-semibold text-center mb-6 px-4">
             {GPT_CONSTANTS.CREATE_PAGE.HEADING}
           </h1>
           
@@ -646,7 +646,7 @@ And I know I can face any challenge`
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: -10, scale: 0.95 }}
                     transition={{ duration: 0.2, ease: "easeOut" }}
-                    className="absolute top-full left-0 mt-2 w-80 bg-[#1D2125] border border-white/10 rounded-lg shadow-2xl z-50 overflow-hidden"
+                    className="absolute top-full left-0 mt-2 w-64 sm:w-80 bg-[#1D2125] border border-white/10 rounded-lg shadow-2xl z-50 overflow-hidden"
                   >
                     <div className="max-h-64 overflow-y-auto">
                       {promptSuggestions.map((prompt, index) => (
@@ -679,8 +679,8 @@ And I know I can face any challenge`
 
         {/* Music Items Display - Only show valid prompts */}
         {musicItems.filter((item) => isValidPrompt(item.prompt)).length > 0 && (
-          <div className="flex flex-col gap-4 mt-8 pb-4">
-            <h2 className="text-white text-xl font-semibold">{GPT_CONSTANTS.CREATE_PAGE.RECENT_GENERATIONS}</h2>
+          <div className="flex flex-col gap-4 mt-8 mb-4 sm:mb-8 sm:pb-4 px-4 sm:px-0">
+            <h2 className="text-white text-lg sm:text-xl font-semibold">{GPT_CONSTANTS.CREATE_PAGE.RECENT_GENERATIONS}</h2>
             {musicItems
               .filter((item) => isValidPrompt(item.prompt))
               .slice()
@@ -693,7 +693,7 @@ And I know I can face any challenge`
 
         {/* Error Messages Container - Wrap warnings and invalid prompts with gap */}
         {(showServerBusyWarning || invalidPrompts.length > 0) && (
-          <div className="flex flex-col gap-4 mt-4">
+          <div className="flex flex-col gap-4 mt-4 px-4 sm:px-0">
             {/* Warning Section - Show when more than 2 items are processing */}
             {showServerBusyWarning && (
               <div className="flex flex-col gap-2 rounded-lg p-4 bg-[#EE0D37]/[0.08]">

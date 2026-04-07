@@ -15,6 +15,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import MusicList from "./MusicList";
 import Image from "next/image";
 import { useSongStore } from "@/stores/songStore";
+import { useUserStore } from "@/stores/userStore";
 import { useWarningStore } from "@/stores/warningStore";
 import { useInvalidPromptStore } from "@/stores/invalidPromptStore";
 import { motion, AnimatePresence } from "framer-motion";
@@ -42,17 +43,18 @@ export default function Profile() {
   const [previewURL, setPreviewURL] = useState<string>('');
   const [isUpdating, setIsUpdating] = useState(false);
   const { musicItems } = useSongStore();
+  const { userProfile, updateUserProfile, uploadProfilePicture } = useUserStore();
   const { showServerBusyWarning } = useWarningStore();
   const { invalidPrompts } = useInvalidPromptStore();
-  const { user, loading, signOut } = useAuth();
+  const { user, loading, signOut, updateUserDisplayName, refreshUserProfile } = useAuth();
   const { credits, loading: creditsLoading } = useCredits();
 
-  // Initialize display name when user changes
+  // Initialize display name when user profile changes
   useEffect(() => {
-    if (user) {
-      setDisplayName(user.displayName || '');
+    if (userProfile) {
+      setDisplayName(userProfile.displayName || '');
     }
-  }, [user]);
+  }, [userProfile]);
 
   const handleSignOut = async () => {
     try {
@@ -85,17 +87,25 @@ export default function Profile() {
     
     setIsUpdating(true);
     try {
-      let photoURL = user.photoURL;
+      let photoURL = userProfile?.photoURL || user?.photoURL;
       
       if (profilePicture) {
-        // For now, we'll keep the upload functionality as is since it involves Firebase Storage
-        // In a production app, this should also go through a backend API
-        const { uploadProfilePicture } = await import('@/lib/firebase');
+        // Use Express backend API for profile picture upload
+        console.log('Uploading profile picture via Express API');
         photoURL = await uploadProfilePicture(user.uid, profilePicture);
       }
       
-      // Use backend API instead of direct Firebase
-      await updateProfileInBackend(user.uid, displayName, photoURL || undefined);
+      // Use Express backend API via Zustand store
+      await updateUserProfile(user.uid, displayName, photoURL || undefined);
+      
+      // Immediately update local state for instant UI feedback
+      updateUserDisplayName(displayName);
+      
+      // Small delay to ensure backend update is processed
+      await new Promise(resolve => setTimeout(resolve, 300));
+      
+      // Refresh the user profile from backend
+      await refreshUserProfile();
       
       // Reset form
       setProfilePicture(null);
@@ -138,7 +148,7 @@ export default function Profile() {
               variant="default"
               className="profile-gradient-ring focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0"
             >
-              {user?.displayName?.[0]?.toUpperCase() || user?.email?.[0]?.toUpperCase() || 'A'}
+              {userProfile?.displayName?.[0]?.toUpperCase() || user?.email?.[0]?.toUpperCase() || 'A'}
             </Button>
             {/* Notification Badge */}
             {!creditsLoading && credits < 100 && (
@@ -207,7 +217,7 @@ export default function Profile() {
                             <img src={user.photoURL} alt="Profile" className="w-full h-full object-cover" />
                           ) : (
                             <span className="text-white text-xl">
-                              {user?.displayName?.[0]?.toUpperCase() || user?.email?.[0]?.toUpperCase() || 'A'}
+                              {userProfile?.displayName?.[0]?.toUpperCase() || user?.email?.[0]?.toUpperCase() || 'A'}
                             </span>
                           )}
                         </div>
@@ -278,12 +288,12 @@ export default function Profile() {
                     <div className="flex flex-row items-center gap-3">
                       <div className="profile-gradient-ring w-14 h-14 flex flex-col items-center justify-center text-white font-medium">
                         <span className="text-xl">
-                          {user?.displayName?.[0]?.toUpperCase() || user?.email?.[0]?.toUpperCase() || 'A'}
+                          {userProfile?.displayName?.[0]?.toUpperCase() || user?.email?.[0]?.toUpperCase() || 'A'}
                         </span>
                       </div>
                       <div className="flex flex-col items-center justify-center gap-1">
                         <span className="text-xl font-medium text-white">
-                          {user?.displayName !== undefined ? user.displayName : ''}
+                          {userProfile?.displayName || ''}
                         </span>
                         <span className="text-xs text-white/60">
                           @{user?.email?.split('@')[0] || 'user'}

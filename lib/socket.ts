@@ -1,5 +1,6 @@
 import { io, Socket } from 'socket.io-client'
 import { useSongStore } from '@/stores/songStore'
+import { updateSongInBackend } from '@/lib/songApi'
 
 class SocketService {
   private socket: Socket | null = null
@@ -73,6 +74,18 @@ class SocketService {
         const musicItem = store.musicItems.find(item => item.id === data.id)
         
         if (musicItem) {
+          // Don't overwrite completed songs with old progress data
+          // Check for various completion states
+          const isAlreadyCompleted = 
+            musicItem.status === 'completed' || 
+            (musicItem.progress === 100 && musicItem.status !== 'failed') ||
+            (musicItem.result && musicItem.result.url);
+          
+          if (isAlreadyCompleted) {
+            console.log('Skipping progress update for already completed song:', data.id, 'Current status:', musicItem.status, 'Progress:', musicItem.progress);
+            return
+          }
+          
           const updates: any = {
             progress: data.progress || 0,
             status: (data.status as 'idle' | 'pending' | 'generating' | 'completed' | 'failed') || 'generating',
@@ -82,8 +95,21 @@ class SocketService {
           // Set completedAt timestamp when song completes
           if (data.progress === 100 && data.status === 'completed') {
             updates.completedAt = Date.now()
+            
+            // Save the completed status to Firebase when song finishes
+            if (musicItem.userId) {
+              console.log('Saving completed status to Firebase for song:', data.id);
+              updateSongInBackend(musicItem.userId!, data.id, {
+                status: 'completed',
+                progress: 100,
+                completedAt: Date.now()
+              }).catch(error => {
+                console.error('Failed to save completed status to Firebase:', error);
+              });
+            }
           }
           
+          console.log('Updating song progress:', data.id, 'New progress:', data.progress, 'Status:', data.status);
           store.updateMusicItem(data.id, updates)
         } else {
           console.warn('Music item not found for ID:', data.id)

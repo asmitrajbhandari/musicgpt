@@ -64,10 +64,25 @@ export const useSongStore = create<MusicStoreState & MusicStoreActions>()(
           )
         }))
         
-        // Update in backend if item has userId
+        // Only update in backend for meaningful user interactions, not progress updates
         const item = get().musicItems.find(item => item.id === id)
         if (item?.userId) {
-          updateSongInBackend(item.userId, id, updates).catch(console.error)
+          // Only save user actions, not progress/status updates
+          const meaningfulUpdates = {
+            liked: updates.liked,
+            disliked: updates.disliked,
+            downloaded: updates.downloaded,
+            hasBeenPlayed: updates.hasBeenPlayed
+          }
+          
+          // Only call backend if there are meaningful updates to save
+          const hasMeaningfulUpdates = Object.keys(meaningfulUpdates).some(
+            key => meaningfulUpdates[key as keyof typeof meaningfulUpdates] !== undefined
+          )
+          
+          if (hasMeaningfulUpdates) {
+            updateSongInBackend(item.userId, id, meaningfulUpdates).catch(console.error)
+          }
         }
       },
       
@@ -81,7 +96,9 @@ export const useSongStore = create<MusicStoreState & MusicStoreActions>()(
       
       loadUserSongs: async (userId: string) => {
         try {
+          console.log('Loading songs from Firebase for user:', userId);
           const userSongs = await getSongsFromBackend(userId)
+          console.log('Loaded songs from Firebase:', userSongs.map(s => ({ id: s.id, status: s.status, progress: s.progress, hasResult: !!s.result })));
           set({ musicItems: userSongs })
         } catch (error) {
           console.error('Failed to load user songs:', error)
