@@ -436,8 +436,8 @@ export default function MusicPlayer({ musicItem, isVisible }: MusicPlayerProps) 
                 </div>
               </div>
 
-              {/* Center Section: Controls */}
-              <div className="flex flex-row items-center gap-2 sm:gap-4 flex-shrink-0">
+              {/* Center Section: Controls - Absolutely Centered */}
+              <div className="absolute left-1/2 transform -translate-x-1/2 flex flex-row items-center gap-2 sm:gap-4 flex-shrink-0">
                 <button
                   onClick={handlePlayPause}
                   className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white flex items-center justify-center hover:scale-110 transition-transform"
