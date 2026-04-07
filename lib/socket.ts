@@ -14,7 +14,7 @@ class SocketService {
     }
 
     const socketUrl = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:3001'
-    const backendApiUrl = process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://localhost:3002'
+    const backendApiUrl = process.env.NEXT_PUBLIC_BACKEND_API_URL
     
     console.log('Connecting to Socket.IO server at:', socketUrl)
     console.log('Backend API URL:', backendApiUrl)

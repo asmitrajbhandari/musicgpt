@@ -3,7 +3,7 @@
 export async function getUserProfileFromBackend(userId: string) {
   try {
     console.log('Fetching user profile from Express backend for userId:', userId);
-    const response = await fetch(`http://localhost:3002/user/profile?userId=${userId}`);
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/user/profile?userId=${userId}`);
     
     const result = await response.json();
     console.log('Received response from Express backend:', result);
@@ -23,7 +23,7 @@ export async function getUserProfileFromBackend(userId: string) {
 export async function updateUserProfileInBackend(userId: string, displayName: string, photoURL?: string) {
   try {
     console.log('Updating user profile in Express backend:', { userId, displayName, photoURL });
-    const response = await fetch(`http://localhost:3002/user/profile`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/user/profile`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -59,7 +59,7 @@ export async function uploadProfilePictureToBackend(userId: string, file: File) 
     formData.append('profilePicture', file);
     formData.append('userId', userId);
 
-    const response = await fetch(`http://localhost:3002/user/profile-picture`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/user/profile-picture`, {
       method: 'POST',
       body: formData,
     });

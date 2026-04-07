@@ -195,7 +195,7 @@ export default function CreatePage() {
       addMusicItem(songTitle, input, item2Id, 'v2', randomImageNumber, user?.uid)
       
       console.log('Sending API request...')
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://localhost:3002'}/create-song`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/create-song`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
