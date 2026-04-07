@@ -96,12 +96,9 @@ export const useSongStore = create<MusicStoreState & MusicStoreActions>()(
       
       loadUserSongs: async (userId: string) => {
         try {
-          console.log('Loading songs from Firebase for user:', userId);
           const userSongs = await getSongsFromBackend(userId)
-          console.log('Loaded songs from Firebase:', userSongs.map(s => ({ id: s.id, status: s.status, progress: s.progress, hasResult: !!s.result })));
           set({ musicItems: userSongs })
         } catch (error) {
-          console.error('Failed to load user songs:', error)
         }
       },
     }),

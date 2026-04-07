@@ -6,7 +6,13 @@ import { useSongStore } from "@/stores/songStore";
 import { Button } from "@/components/ui/button";
 
 export default function MusicGenerationSection() {
-  const { status, progress, prompt } = useSongStore();
+  const { musicItems } = useSongStore();
+  
+  // Get the first generating song for display, or use defaults
+  const generatingSong = musicItems.find(item => item.status === 'generating' || item.status === 'pending');
+  const status = generatingSong?.status || 'idle';
+  const progress = generatingSong?.progress || 0;
+  const prompt = generatingSong?.prompt || '';
   const progressPercentage = progress || 0;
 
   return (
@@ -108,7 +114,7 @@ export default function MusicGenerationSection() {
                   </div>
                   <div className="flex items-center flex-1">
                     <div className="text-white text-sm">
-                      create a funky house song with female voice
+                      {prompt || 'create a funky house song with female voice'}
                     </div>
                   </div>
                   <div className="flex items-center justify-center">

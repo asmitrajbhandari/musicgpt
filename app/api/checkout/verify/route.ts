@@ -2,9 +2,15 @@ import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { addCredits } from '@/lib/firebase'
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2024-06-20',
-})
+// Initialize Stripe lazily to avoid build-time errors
+const getStripe = () => {
+  if (!process.env.STRIPE_SECRET_KEY) {
+    throw new Error('STRIPE_SECRET_KEY is not configured')
+  }
+  return new Stripe(process.env.STRIPE_SECRET_KEY, {
+    apiVersion: '2024-06-20',
+  })
+}
 
 export async function GET(request: NextRequest) {
   try {
@@ -21,7 +27,7 @@ export async function GET(request: NextRequest) {
 
     // Retrieve the session to verify payment
     console.log('Retrieving Stripe session...')
-    const session = await stripe.checkout.sessions.retrieve(session_id)
+    const session = await getStripe().checkout.sessions.retrieve(session_id)
     console.log('Stripe session retrieved:', { 
       id: session.id, 
       payment_status: session.payment_status,
@@ -55,7 +61,7 @@ export async function GET(request: NextRequest) {
         console.log(`Successfully added ${creditsToAdd} credits to user ${userId}`)
         
         // Mark session as processed to prevent duplicate additions
-        await stripe.checkout.sessions.update(session_id, {
+        await getStripe().checkout.sessions.update(session_id, {
           metadata: {
             ...session.metadata,
             processed: 'true'
