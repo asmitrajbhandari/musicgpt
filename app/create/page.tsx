@@ -196,7 +196,8 @@ export default function CreatePage() {
       
       console.log('Sending API request...')
       console.log('Backend API URL:', process.env.NEXT_PUBLIC_BACKEND_API_URL)
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/create-song`, {
+      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://localhost:3002';
+      const response = await fetch(`${backendUrl}/create-song`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
