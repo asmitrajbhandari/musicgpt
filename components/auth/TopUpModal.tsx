@@ -268,15 +268,17 @@ export default function TopUpModal({ isOpen, onClose }: TopUpModalProps) {
                   Secures payment powered by
                 </p>
                 <div className="flex items-center">
-                  <Image
-                    src="/assets/images/squareSpaceLogo.png"
-                    alt="Strippe"
-                    width={40}
-                    height={16}
-                    className="object-contain opacity-60"
-                  />
+                  <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center mr-2 ml-2">
+                    <Image
+                      src="/assets/images/squareSpaceLogo.png"
+                      alt="Payment Provider"
+                      width={36}
+                      height={36}
+                      className="object-contain"
+                    />
+                  </div>
                   <p className="text-white/40 text-xs">
-                    Strippe
+                    Stripe
                   </p>
                 </div>
               </div>
