@@ -13,13 +13,9 @@ const firebaseConfig = {
   measurementId: "G-YGEJ5K897S"
 }
 
-// Add debug logging
-console.log('Firebase config:', firebaseConfig)
-
 let app
 try {
   app = initializeApp(firebaseConfig)
-  console.log('Firebase app initialized successfully')
 } catch (error) {
   console.error('Firebase initialization error:', error)
   throw error

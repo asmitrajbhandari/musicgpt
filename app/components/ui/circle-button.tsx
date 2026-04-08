@@ -21,6 +21,7 @@ export default function CircleButton({ icon, alt, iconOpacity = 60, onClick }: C
         width={20}
         height={20}
         className={iconClass}
+        style={{ width: 'auto', height: 'auto' }}
       />
     </button>
   )

@@ -51,7 +51,7 @@ export default function Sidebar() {
             <Link href="/" className="active:scale-95 transition duration-200">
               <span className="flex items-center gap-2.5">
                 <span className="w-8 h-8">
-                  <Image src="/assets/images/musicgpt-logo.png" alt="logo" width={32} height={32} />
+                  <Image src="/assets/images/musicgpt-logo.png" alt="logo" width={32} height={32} style={{ width: 'auto', height: 'auto' }} />
                 </span>
                 <span className="gpt-text-sm font-medium text-white text-white">MusicGPT</span>
               </span>
@@ -144,7 +144,7 @@ export default function Sidebar() {
             )}
           </button>
           <div className="w-8 h-8">
-            <Image src="/assets/images/musicgpt-logo.png" alt="logo" width={32} height={32} />
+            <Image src="/assets/images/musicgpt-logo.png" alt="logo" width={32} height={32} style={{ width: 'auto', height: 'auto' }} />
           </div>
           <span className="gpt-text-sm font-medium text-white">MusicGPT</span>
         </div>

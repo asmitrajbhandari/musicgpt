@@ -33,6 +33,7 @@ export default function MusicGenerationSection() {
                       src="/assets/images/generate-1.webp"
                       alt="Generate music background"
                       fill
+                      sizes="(max-width: 768px) 4rem, 4rem"
                       className="absolute inset-0 w-full h-full object-cover rounded-lg"
                     />
                     {/* 1. The Black Fade */}

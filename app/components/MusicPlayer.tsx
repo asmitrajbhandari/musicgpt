@@ -28,6 +28,7 @@ export default function MusicPlayer({ musicItem, isVisible }: MusicPlayerProps) 
   const [hoverPosition, setHoverPosition] = useState(0);
   const [hoverTime, setHoverTime] = useState(0);
   const [previousAudioUrl, setPreviousAudioUrl] = useState<string | null>(null);
+  const [previousSongId, setPreviousSongId] = useState<string | null>(null);
   const controls = useAnimation();
   const hidePlayer = useMusicPlayerStore((state) => state.hidePlayer);
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -40,12 +41,19 @@ export default function MusicPlayer({ musicItem, isVisible }: MusicPlayerProps) 
   const artist = currentMusicItem?.result?.artist;
   const isLiked = currentMusicItem?.liked || false;
 
-  // Reset audio element when switching between different S3 URLs
+  // Reset audio element when switching between different songs (even if same URL)
   useEffect(() => {
-    if (audioUrl && previousAudioUrl && audioUrl !== previousAudioUrl) {
-      console.log('Audio URL changed, resetting audio element:', {
+    const shouldReset = audioUrl && (
+      audioUrl !== previousAudioUrl || 
+      musicItem.id !== previousSongId
+    );
+    
+    if (shouldReset) {
+      console.log('Song changed, resetting audio element:', {
         from: previousAudioUrl,
-        to: audioUrl
+        to: audioUrl,
+        fromSongId: previousSongId,
+        toSongId: musicItem.id
       });
       
       if (audioRef.current) {
@@ -67,16 +75,30 @@ export default function MusicPlayer({ musicItem, isVisible }: MusicPlayerProps) 
             audioRef.current.src = audioUrl;
             audioRef.current.load();
             console.log('Audio element reset and new source loaded');
+            
+            // Auto-play after loading the new source
+            setTimeout(() => {
+              if (audioRef.current) {
+                audioRef.current.play().then(() => {
+                  setIsPlaying(true);
+                  console.log('Auto-started playback for new song');
+                }).catch(error => {
+                  console.error('Auto-play failed:', error);
+                });
+              }
+            }, 200);
           }
         }, 100);
       }
       
       setPreviousAudioUrl(audioUrl);
+      setPreviousSongId(musicItem.id);
     } else if (audioUrl && !previousAudioUrl) {
       // First time setting audio URL
       setPreviousAudioUrl(audioUrl);
+      setPreviousSongId(musicItem.id);
     }
-  }, [audioUrl, previousAudioUrl]);
+  }, [audioUrl, previousAudioUrl, previousSongId, musicItem.id]);
 
   const handlePlayPause = async () => {
     if (!audioRef.current) {
@@ -427,6 +449,7 @@ export default function MusicPlayer({ musicItem, isVisible }: MusicPlayerProps) 
                     src={`/assets/images/generate-${musicItem.imageNumber}.webp`}
                     alt={musicItem.title}
                     fill
+                    sizes="(max-width: 768px) 3.5rem, 3.5rem"
                     className="object-cover"
                   />
                 </div>

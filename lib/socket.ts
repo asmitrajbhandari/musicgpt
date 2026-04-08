@@ -9,15 +9,11 @@ class SocketService {
 
   connect() {
     if (this.socket?.connected) {
-      console.log('Socket already connected')
       return
     }
 
     const socketUrl = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:3001'
     const backendApiUrl = process.env.NEXT_PUBLIC_BACKEND_API_URL
-    
-    console.log('Connecting to Socket.IO server at:', socketUrl)
-    console.log('Backend API URL:', backendApiUrl)
 
     this.socket = io(socketUrl, {
       autoConnect: true,
@@ -34,12 +30,11 @@ class SocketService {
     if (!this.socket) return
 
     this.socket.on('connect', () => {
-      console.log('Connected to Socket.IO server')
       this.reconnectAttempts = 0
     })
 
     this.socket.on('disconnect', (reason) => {
-      console.log('Disconnected from Socket.IO server:', reason)
+      // Handle disconnect
     })
 
     this.socket.on('connect_error', (error: Error) => {
@@ -52,7 +47,6 @@ class SocketService {
     })
 
     this.socket.on('song-progress', (data: { id: string; progress: number; status: string; prompt: string }) => {
-      console.log('Received song-progress:', data)
       
       let progressText = ''
       if (data.progress >= 0 && data.progress <= 20) {
@@ -82,7 +76,6 @@ class SocketService {
             (musicItem.result && musicItem.result.url);
           
           if (isAlreadyCompleted) {
-            console.log('Skipping progress update for already completed song:', data.id, 'Current status:', musicItem.status, 'Progress:', musicItem.progress);
             return
           }
           
@@ -98,7 +91,6 @@ class SocketService {
             
             // Save the completed status to Firebase when song finishes
             if (musicItem.userId) {
-              console.log('Saving completed status to Firebase for song:', data.id);
               updateSongInBackend(musicItem.userId!, data.id, {
                 status: 'completed',
                 progress: 100,
@@ -109,7 +101,6 @@ class SocketService {
             }
           }
           
-          console.log('Updating song progress:', data.id, 'New progress:', data.progress, 'Status:', data.status);
           store.updateMusicItem(data.id, updates)
         } else {
           console.warn('Music item not found for ID:', data.id)
@@ -125,8 +116,6 @@ class SocketService {
   }
 
   emit(event: string, data: any) {
-    console.log('Emitting event:', event, data)
-    
     if (this.socket?.connected) {
       this.socket.emit(event, data)
     } else {
@@ -141,7 +130,6 @@ class SocketService {
 
   disconnect() {
     if (this.socket) {
-      console.log('Disconnecting from Socket.IO server')
       this.socket.disconnect()
       this.socket = null
     }

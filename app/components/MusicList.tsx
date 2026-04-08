@@ -44,25 +44,18 @@ export default function MusicList({ musicItem }: MusicListProps) {
 
   // Check and remove green dot after 1 minute
   useEffect(() => {
-    console.log('Green dot check - completedAt:', musicItem.completedAt, 'status:', musicItem.status, 'hasBeenPlayed:', musicItem.hasBeenPlayed);
-    
     if (musicItem.completedAt && musicItem.status === 'completed' && !musicItem.hasBeenPlayed) {
       const oneMinuteInMs = 60000;
       const timeSinceCompletion = Date.now() - musicItem.completedAt;
       const remainingTime = oneMinuteInMs - timeSinceCompletion;
       
-      console.log('Time since completion:', timeSinceCompletion, 'remaining time:', remainingTime);
-      
       if (remainingTime > 0) {
-        console.log('Setting timer to remove green dot in', remainingTime, 'ms');
         const timer = setTimeout(() => {
-          console.log('Timer fired - removing green dot for song:', musicItem.id);
           updateMusicItem(musicItem.id, { hasBeenPlayed: true });
         }, remainingTime);
         
         return () => clearTimeout(timer);
       } else {
-        console.log('Already past 1 minute, removing green dot immediately');
         updateMusicItem(musicItem.id, { hasBeenPlayed: true });
       }
     }
@@ -74,11 +67,8 @@ export default function MusicList({ musicItem }: MusicListProps) {
   }
 
   const handlePlayClick = () => {
-    console.log('Play clicked for song:', musicItem.id, 'hasBeenPlayed:', musicItem.hasBeenPlayed);
-    
     // Mark song as played
     updateMusicItem(musicItem.id, { hasBeenPlayed: true });
-    console.log('Updated hasBeenPlayed to true');
     
     // Assign song mapping if not already assigned
     if (!musicItem.result?.audio_url) {
@@ -174,6 +164,7 @@ export default function MusicList({ musicItem }: MusicListProps) {
                 src={`/assets/images/generate-${musicItem.imageNumber}.webp`}
                 alt="Generate music background"
                 fill
+                sizes="(max-width: 768px) 4rem, 4rem"
                 className="absolute inset-0 w-full h-full object-cover rounded-lg"
               />
               

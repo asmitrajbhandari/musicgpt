@@ -40,7 +40,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      console.log('Auth state changed:', user ? `User: ${user.email}` : 'No user')
       setUser(user)
       
       if (user) {
@@ -52,7 +51,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const { initializeUserCredits } = require('@/lib/firebase')
         initializeUserCredits(user.uid).catch(console.error)
       } else {
-        console.log('AuthContext: User logged out, clearing profile');
         clearUserProfile();
       }
       

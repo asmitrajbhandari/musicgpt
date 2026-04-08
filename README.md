@@ -50,7 +50,7 @@ nextjs-tailwind-app/
 ├── app/
 │   ├── api/
 │   │   └── create-song/
-│   │       └── route.ts              # API route for song creation
+│   │       └── route.ts              # API route for song creation (legacy)
 │   ├── components/
 │   │   ├── ui/
 │   │   │   ├── circle-button.tsx     # Reusable circular button component
@@ -168,13 +168,13 @@ Complex component displaying music generation items with:
    2.2 Sets status: 'pending', progress: 0
    2.3 Adds to musicItems array in songStore
 
-3. Next.js API Route Layer
-   3.1 POST /api/create-song
+3. Next.js Frontend Layer
+   3.1 POST /initiate-song-generation (Express backend)
    3.2 Validates prompt
-   3.3 Forwards request via HTTP POST to Socket.IO server
+   3.3 Sends request via HTTP POST to Express backend
 
-4. Socket.IO Server (Port 3001)
-   4.1 HTTP Endpoint: POST /create-song
+4. Express Backend Server (Port 3002)
+   4.1 HTTP Endpoint: POST /initiate-song-generation
    4.2 Receives prompt + itemIds [id1, id2]
    4.3 Spawns 2 parallel progress simulations:
        - Item 1 (v1): 50ms intervals, completes in ~5 seconds
@@ -220,7 +220,7 @@ Complex component displaying music generation items with:
 
 ### Step 2: Next.js API Route Processing
 
-**Location:** `app/api/create-song/route.ts`
+**Location:** `app/create/page.tsx` (frontend)
 
 **Process:**
 1. Parse request body to extract prompt and itemIds

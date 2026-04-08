@@ -39,6 +39,7 @@ export default function RoundedButton({
         width={20}
         height={20}
         className={iconClass}
+        style={{ width: 'auto', height: 'auto' }}
       />
       <span className={textClass}>{text}</span>
     </button>

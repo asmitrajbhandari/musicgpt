@@ -32,9 +32,7 @@ export const useUserStore = create<UserStore>()(
         set({ loading: true, error: null })
         
         try {
-          console.log('UserStore: Fetching user profile for userId:', userId);
           const profile = await getUserProfileFromBackend(userId);
-          console.log('UserStore: Successfully fetched user profile:', profile);
           set({ userProfile: profile, loading: false });
         } catch (error) {
           console.error('UserStore: Failed to fetch user profile:', error);
@@ -46,9 +44,7 @@ export const useUserStore = create<UserStore>()(
         set({ loading: true, error: null })
         
         try {
-          console.log('UserStore: Updating user profile:', { userId, displayName, photoURL });
           const result = await updateUserProfileInBackend(userId, displayName, photoURL);
-          console.log('UserStore: Successfully updated user profile:', result.user);
           
           // Update local state with the response from backend
           set({ userProfile: result.user, loading: false });
@@ -62,9 +58,7 @@ export const useUserStore = create<UserStore>()(
         set({ loading: true, error: null })
         
         try {
-          console.log('UserStore: Uploading profile picture for userId:', userId);
           const photoURL = await uploadProfilePictureToBackend(userId, file);
-          console.log('UserStore: Successfully uploaded profile picture:', photoURL);
           
           // Update local state with new photo URL
           const currentState = get().userProfile;
@@ -86,7 +80,6 @@ export const useUserStore = create<UserStore>()(
       },
 
       clearUserProfile: () => {
-        console.log('UserStore: Clearing user profile');
         set({ userProfile: null, error: null });
       }
     }),

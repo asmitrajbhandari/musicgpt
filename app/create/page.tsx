@@ -99,11 +99,8 @@ export default function CreatePage() {
 
   const verifyPayment = async (sessionId: string, packageId: string | null) => {
     try {
-      console.log('Verifying payment:', { sessionId, packageId })
       const response = await fetch(`/api/checkout/verify?session_id=${sessionId}&package=${packageId}`)
       const data = await response.json()
-
-      console.log('Payment verification response:', data)
 
       if (data.success) {
         if (data.creditsAdded > 0) {
@@ -145,11 +142,8 @@ export default function CreatePage() {
   }, [user])
 
   const handleSubmit = async () => {
-    console.log('Submit button clicked, input:', input)
-    console.log('Socket connected:', socketService.isConnected())
     
     if (!input.trim()) {
-      console.error('Please enter a music prompt')
       return
     }
 
@@ -194,10 +188,8 @@ export default function CreatePage() {
       addMusicItem(songTitle, input, item1Id, 'v1', randomImageNumber, user?.uid)
       addMusicItem(songTitle, input, item2Id, 'v2', randomImageNumber, user?.uid)
       
-      console.log('Sending API request...')
-      console.log('Backend API URL:', process.env.NEXT_PUBLIC_BACKEND_API_URL)
       const backendUrl = process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://localhost:3002';
-      const response = await fetch(`${backendUrl}/create-song`, {
+      const response = await fetch(`${backendUrl}/initiate-song-generation`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
@@ -207,13 +199,10 @@ export default function CreatePage() {
       })
 
       const data = await response.json()
-      console.log('API response:', data)
 
       if (!data.success) {
-        throw new Error(data.error || 'Failed to start song creation')
+        throw new Error(data.error || 'Failed to initiate song generation')
       }
-      
-      console.log('Song creation started via API route')
       
       // Clear input after successful submission
       setInput('')
@@ -681,7 +670,7 @@ And I know I can face any challenge`
 
         {/* Music Items Display - Only show valid prompts */}
         {musicItems.filter((item) => isValidPrompt(item.prompt)).length > 0 && (
-          <div className="flex flex-col gap-4 mt-8 mb-4 sm:mb-8 sm:pb-4 px-4 sm:px-0">
+          <div className="flex flex-col gap-4 mt-8 mb-4 sm:mb-8 sm:pb-4 px-0">
             <h2 className="text-white text-lg sm:text-xl font-semibold">{GPT_CONSTANTS.CREATE_PAGE.RECENT_GENERATIONS}</h2>
             {musicItems
               .filter((item) => isValidPrompt(item.prompt))
