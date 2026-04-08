@@ -29,14 +29,14 @@ export async function saveSongToBackend(userId: string, songData: any) {
 
 export async function updateSongInBackend(userId: string, songId: string, updates: any) {
   try {
-    const response = await fetch('/api/songs', {
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://localhost:3002';
+    const response = await fetch(`${backendUrl}/songs/${songId}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         userId,
-        songId,
         updates
       }),
     });
