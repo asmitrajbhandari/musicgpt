@@ -1,7 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { getUserProfileFromBackend, updateUserProfileInBackend, uploadProfilePictureToBackend } from '@/lib/userApi'
-import { updateProfileInBackend } from '@/lib/profileApi'
 
 interface UserProfile {
   uid: string;
@@ -48,11 +47,11 @@ export const useUserStore = create<UserStore>()(
         
         try {
           console.log('UserStore: Updating user profile:', { userId, displayName, photoURL });
-          const result = await updateProfileInBackend(userId, displayName, photoURL);
-          console.log('UserStore: Successfully updated user profile');
+          const result = await updateUserProfileInBackend(userId, displayName, photoURL);
+          console.log('UserStore: Successfully updated user profile:', result.user);
           
-          // Update local state - fetch updated profile to get latest data
-          await get().fetchUserProfile(userId);
+          // Update local state with the response from backend
+          set({ userProfile: result.user, loading: false });
         } catch (error) {
           console.error('UserStore: Failed to update user profile:', error);
           set({ error: error instanceof Error ? error.message : 'Failed to update user profile', loading: false });
