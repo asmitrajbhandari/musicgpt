@@ -278,7 +278,7 @@ export default function TopUpModal({ isOpen, onClose }: TopUpModalProps) {
                     />
                   </div>
                   <p className="text-white/40 text-xs">
-                    Stripe
+                    Strippe
                   </p>
                 </div>
               </div>
