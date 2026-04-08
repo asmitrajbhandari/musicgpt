@@ -21,6 +21,31 @@ class SocketService {
       reconnectionDelay: 1000,
       reconnectionAttempts: this.maxReconnectAttempts,
       timeout: 5000,
+      // Force WebSocket only - no polling fallback
+      transports: ['websocket'],
+      upgrade: false,
+    })
+
+    // Log transport information
+    this.socket.on('connect', () => {
+      console.log('Socket connected successfully')
+    })
+
+    this.socket.on('connect_error', (error) => {
+      console.error('Socket connection error:', error.message)
+    })
+
+    // Log transport changes
+    this.socket.io.on('open', () => {
+      console.log('Socket.IO transport opened')
+    })
+
+    this.socket.io.on('close', (reason) => {
+      console.log('Socket.IO transport closed:', reason)
+    })
+
+    this.socket.io.on('error', (error) => {
+      console.error('Socket.IO transport error:', error)
     })
 
     this.setupEventListeners()
