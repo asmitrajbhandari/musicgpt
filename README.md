@@ -1,4 +1,4 @@
-# MusicGPT: AI Music Generation Platform
+AI Music Generation Platform
 
 ## Project Overview
 
